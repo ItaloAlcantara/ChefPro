@@ -1,0 +1,20 @@
+<cp-loading></cp-loading>
+
+<div class="text-right">
+	<button class="btn btn-accent m-btn m-btn--air m-btn--custom" mat-button (click)="new()" translate>
+		{{ 'INPUTS.NEW' }}
+	</button>
+</div>
+<mat-nav-list>
+	<a class="list-item" mat-list-item (click)="edit(recipe.id)" *ngFor="let recipe of recipes">
+		{{recipe.name}}
+		<mat-icon matListIcon class="list-icon-right" [inline]="true">
+			keyboard_arrow_right
+		</mat-icon>
+	</a>
+</mat-nav-list>
+
+<div class="alert alert-info" *ngIf="!recipes?.length" translate>
+	{{ 'RECIPE.NO_RESULTS'}}
+</div>
+

@@ -1,0 +1,201 @@
+<cp-loading></cp-loading>
+<div class="m-portlet m-portlet--full-height m-portlet--tabs">
+	<div class="m-portlet__body">
+		<div class="form-group m-form__group row">
+			<h3 class="m-form__section" translate>{{'RECIPE.TITLE'}}</h3>
+		</div>
+		<form class="m-form m-form--fit m-form--label-align-right" name="form" [formGroup]="formGroup" novalidate>
+			<div class="m-portlet__body">
+				<ngb-tabset>
+					<ngb-tab title="{{'RECIPE.TABS.GENERAL.TITLE' | translate }}">
+						<ng-template ngbTabContent>
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="form-group m-form__group">
+										<label class="col-form-label" translate>{{ 'RECIPE.INPUT.NAME' }}</label>
+										<input class="form-control m-input cp-input" name="name" formControlName="name" placeholder="{{'RECIPE.INPUT.NAME' | translate }}"
+										 type="text">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group m-form__group">
+										<label class="col-form-label" translate>{{ 'RECIPE.INPUT.CATEGORY' }}</label>
+										<select [compareWith]="compareSelect" class="form-control cp-input" name="category" formControlName="recipeCategory">
+											<option value="null" [disabled]="true" translate>{{'INPUTS.OPTION_DEFAULT'}}</option>
+											<option *ngFor="let category of categories" [ngValue]="category">{{ category.name }}</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group m-form__group">
+										<label class="col-form-label" translate>{{ 'RECIPE.INPUT.PREPARATION_TIME' }}</label>
+										<input type="text" class="form-control m-input cp-input" name="preparationTime" formControlName="preparationTime"
+										 placeholder="{{'RECIPE.INPUT.PREPARATION_TIME' | translate }}">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group m-form__group">
+										<label class="col-form-label" translate>{{ 'RECIPE.INPUT.UNITQUANTITY' }}</label>
+										<input class="form-control m-input cp-input" name="unityQuantity" type="number" formControlName="unityQuantity"
+										 placeholder="{{'RECIPE.INPUT.UNITQUANTITY' | translate }}">
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group m-form__group">
+										<label class="col-form-label" translate>{{ 'RECIPE.INPUT.UNIT' }}</label>
+										<select [compareWith]="compareSelect" class="form-control cp-input" name="unit" formControlName="unit">
+											<option value="null" [disabled]="true" translate>{{'INPUTS.OPTION_DEFAULT'}}</option>
+											<option *ngFor="let unit of units" [ngValue]="unit">{{ unit.name }}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="form-group m-form__group">
+										<label class="col-form-label" translate>{{ 'RECIPE.INPUT.DESCRIPTION' }}</label>
+										<textarea class="form-control cp-input" rows="3" formControlName="description" placeholder="{{'RECIPE.INPUT.DESCRIPTION' | translate }}"></textarea>
+									</div>
+								</div>
+							</div>
+						</ng-template>
+					</ngb-tab>
+					<ngb-tab title="{{'RECIPE.TABS.INGREDIENTS.TITLE' | translate }}">
+						<ng-template ngbTabContent>
+
+							<div class="form-inline md-form form-sm active-purple-2">
+								<input class="form-control form-control-sm mr-3 w-75" #searchInput type="text" placeholder="Search" aria-label="Search"
+								 mdbInputDirective>
+								<i class="fa fa-search" (click)="fetchIngredients(searchInput.value)" aria-hidden="true"></i>
+							</div>
+
+							<div class="m-section" *ngIf="ingredientsQuery?.length">
+								<mat-nav-list>
+									<a class="list-item" mat-list-item (click)="addIngredient(ingredient); searchInput.value = null" *ngFor="let ingredient of ingredientsQuery">
+										{{ingredient.name}}
+										<mat-icon matListIcon class="list-icon-right" [inline]="true">
+											add
+										</mat-icon>
+									</a>
+								</mat-nav-list>
+								<div class="m-section__content" *ngIf="pagination.totalPages > 0">
+									<ngb-pagination [(collectionSize)]="pagination.totalPages * pagination.itensPerPage" [pageSize]="pagination.itensPerPage"
+									 [(page)]="pagination.currentPage" [maxSize]="5" [boundaryLinks]="true" (pageChange)="fetchIngredients()"></ngb-pagination>
+								</div>
+							</div>
+
+							<div class="m-section" *ngIf="ingredients?.length">
+								<mat-nav-list>
+									<a class="list-item" mat-list-item (click)="setIngredientInfo(i)" *ngFor="let recipeIngredient of ingredients; let i = index">
+										{{recipeIngredient.ingredient.name}}
+										<span class="ingredient-amount-info">
+											{{recipeIngredient.amount}} {{recipeIngredient.unit?.abbreviation}}
+										</span>
+										<span class="ingredient-price-info">
+											R$ {{recipeIngredient.amount * recipeIngredient.purchasePrice.price}}
+										</span>
+										<mat-icon matListIcon class="list-icon-right" [inline]="true">
+											keyboard_arrow_right
+										</mat-icon>
+									</a>
+								</mat-nav-list>
+							</div>
+
+							<div class="form-group m-form__group text-right">
+								<span>
+									Total: {{getTotalIngredients() | currency:'R$'}}
+								</span>
+							</div>
+						</ng-template>
+					</ngb-tab>
+					<ngb-tab title="{{'RECIPE.TABS.PREPARATION.TITLE' | translate }}">
+						<ng-template ngbTabContent>
+							<h5 translate>{{ 'RECIPE.TABS.PREPARATION.METHOD_OF_PREPARATION' }}</h5>
+
+							<div formArrayName="steps" *ngFor="let step of formGroup.get('steps').controls; let i = index">
+								<div class="form-group m-form__group" [formGroupName]="i">
+									<input type="hidden" formControlName="id">
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<div class="input-group-text">{{i+1}}</div>
+										</div>
+										<input class="form-control m-input cp-input" name="name" formControlName="description" placeholder="{{'RECIPE.INPUT.DESCRIPTION' | translate }}"
+										 type="text">
+										<div class="input-group-append" (click)="removeStep(i)" style="cursor:pointer;">
+											<div class="input-group-text">X</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="text-center">
+								<button class="btn btn-link" mat-button (click)="addStep()" translate>
+									{{ 'INPUTS.NEW_STEP' }}
+								</button>
+							</div>
+						</ng-template>
+					</ngb-tab>
+					<ngb-tab title="{{'RECIPE.TABS.FINANCIAL.TITLE' | translate }}">
+						<ng-template ngbTabContent>
+							<div formGroupName="financial">
+								<h5> {{getTotalCost()}} </h5>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group m-form__group">
+											<label class="col-form-label" translate>{{ 'RECIPE.INPUT.SELL_VALUE' }}</label>
+											<input currencyMask maxlength="10" class="form-control m-input cp-input" name="totalCostValue"
+											 formControlName="totalCostValue" placeholder="0,00" type="text" (keyup)="onChangeCostValue()">
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group m-form__group">
+											<label class="col-form-label" translate>{{ 'RECIPE.INPUT.PROFIT_PERC' }}</label>
+											<input currencyMask maxlength="4" [options]="{ prefix: '', suffix: '%', precision: 0 }" class="form-control m-input cp-input"
+											 name="totalCostPerc" formControlName="totalCostPerc" placeholder="0,00" type="text" (keyup)="onChangeCostPerc()">
+										</div>
+									</div>
+								</div>
+
+								<br>
+								<h5 translate>{{ 'RECIPE.TABS.FINANCIAL.UNIT_COAST' }}</h5>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group m-form__group">
+											<label class="col-form-label" translate>{{ 'RECIPE.INPUT.SELL_VALUE' }}</label>
+											<input currencyMask maxlength="10" class="form-control m-input cp-input" name="costUnitValue"
+											 formControlName="costUnitValue" placeholder="0,00" type="text" (keyup)="onChangeCostUnitValue()">
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group m-form__group">
+											<label class="col-form-label" translate>{{ 'RECIPE.INPUT.PROFIT_PERC' }}</label>
+											<input currencyMask maxlength="4" [options]="{ prefix: '', suffix: '%', precision: 0 }" class="form-control m-input cp-input"
+											 name="costUnitPerc" formControlName="costUnitPerc" placeholder="0,00" type="text" (keyup)="onChangeCostUnitPerc()">
+										</div>
+									</div>
+								</div>
+							</div>
+						</ng-template>
+					</ngb-tab>
+				</ngb-tabset>
+
+			</div>
+			<div class="m-portlet__foot m-portlet__foot--fit">
+				<div class="m-form__actions">
+					<div class="row">
+						<div class="col-2"></div>
+						<div class="col-7">
+							<button type="button" class="btn btn-secondary m-btn m-btn--air m-btn--custom" name="btnBack" (click)="cancel()"
+							 translate>{{ 'INPUTS.BACK' }}</button>
+							<button type="button" class="btn btn-accent m-btn m-btn--air m-btn--custom" name="btnSave" (click)="save()"
+							 translate>{{ 'INPUTS.SAVE' }}</button>&nbsp;&nbsp;
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

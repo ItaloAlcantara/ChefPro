@@ -1,0 +1,33 @@
+<cp-loading></cp-loading>
+
+<div class="text-right">
+	<button class="btn btn-accent m-btn m-btn--air m-btn--custom" mat-button (click)="new()" translate>
+		{{ 'INPUTS.NEW' }}
+	</button>
+</div>
+
+<form class="form-inline md-form form-sm active-purple-2">
+	<input class="form-control form-control-sm mr-3 w-75" #searchInput type="text" placeholder="Search" aria-label="Search"
+	  mdbInputDirective>
+	<i class="fa fa-search" (click)="fetchIngredients(searchInput.value)"aria-hidden="true"></i>
+  </form>
+
+<div class="m-section" *ngIf="ingredients?.length">
+	<mat-nav-list>
+		<a class="list-item" mat-list-item (click)="edit(ingredient.id)" *ngFor="let ingredient of ingredients">
+			{{ingredient.name}}
+			<mat-icon matListIcon class="list-icon-right" [inline]="true">
+				keyboard_arrow_right
+			</mat-icon>
+		</a>
+	</mat-nav-list>
+	<div class="m-section__content" >
+		<ngb-pagination [(collectionSize)]="pagination.totalPages * pagination.itensPerPage" [pageSize]="pagination.itensPerPage"
+		 [(page)]="pagination.currentPage" [maxSize]="5" [boundaryLinks]="true" (pageChange)="fetchIngredients()"></ngb-pagination>
+	</div>
+
+</div>
+
+<div class="alert alert-info" *ngIf="!ingredients?.length" translate>
+	{{ 'INGREDIENT.NO_RESULTS'}}
+</div>

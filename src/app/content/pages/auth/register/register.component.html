@@ -1,0 +1,49 @@
+<!--begin::Signin-->
+<div class="m-login__signin">
+	<div class="m-login__title">
+		<h3 class="m-login__title" translate>{{'AUTH.REGISTER.TITLE'}}</h3>
+		<div class="m-login__desc" translate>{{ 'AUTH.REGISTER.DESC'}}</div>
+	</div>
+
+	<m-auth-notice></m-auth-notice>
+
+	<!--begin::Form-->
+	<form class="m-login__form m-form" name="form" [formGroup]="formGroup" novalidate>
+		<div class="form-group">
+			<mat-form-field>
+				<mat-label translate> {{ 'AUTH.INPUT.NAME' }}</mat-label>
+				<input matInput type="text" name="name" placeholder="{{'AUTH.INPUT.NAME' | translate }}" autocomplete="off"
+				 formControlName="name">
+			</mat-form-field>
+		</div>
+		<div class="form-group">
+			<mat-form-field>
+				<mat-label translate>{{ 'AUTH.INPUT.EMAIL' }}</mat-label>
+				<input matInput type="email" name="email" placeholder="{{'AUTH.INPUT.EMAIL' | translate }}" autocomplete="off"
+				 formControlName="email">
+			</mat-form-field>
+		</div>
+		<div class="form-group">
+			<mat-form-field>
+				<mat-label translate> {{ 'AUTH.INPUT.PASSWORD' }}</mat-label>
+				<input matInput mat-icon [type]="typePassword" name="password" placeholder="{{'AUTH.INPUT.PASSWORD' | translate }}"
+				 autocomplete="off" formControlName="password">
+				<mat-icon matSuffix (click)="hide = !hide; changeTypePassword()">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+			</mat-form-field>
+		</div>
+		<div class="form-group">
+			<mat-checkbox name="agree" required="true" formControlName="agree">{{ 'AUTH.INPUT.AGREE' | translate }}
+				<a href="javascript:;" translate> {{ 'AUTH.INPUT.AGREE_TERMS' }}</a>
+			</mat-checkbox>
+		</div>
+	</form>
+	<!--end::Form-->
+
+	<!--begin::Action-->
+	<div class="m-login__action m-login__action--fit">
+		<button mat-button (click)="loginPage($event)" [disabled]="loading">{{ 'AUTH.GENERAL.BACK_BUTTON' | translate }}</button>
+		<m-spinner-button [options]="spinner" (click)="submit()">{{'AUTH.GENERAL.SIGNUP_BUTTON' | translate }}</m-spinner-button>
+	</div>
+	<!--end::Action-->
+</div>
+<!--end::Signin-->

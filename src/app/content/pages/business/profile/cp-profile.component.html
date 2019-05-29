@@ -1,0 +1,111 @@
+<div class="row">
+	<div class="col-xl-3 col-lg-4">
+		<div class="m-portlet m-portlet--full-height">
+			<div class="m-portlet__body">
+				<div class="m-card-profile">
+					<div class="m-card-profile__title m--hide">
+						{{ 'PROFILE.TITLE' }}
+					</div>
+					<div class="m-card-profile__pic">
+						<div class="m-card-profile__pic-wrapper">
+							<img src="http://placehold.it/200x200" alt="">
+						</div>
+					</div>
+					<div class="m-card-profile__details">
+						<span class="m-card-profile__name">{{ user?.name }}</span>
+						<a href="" class="m-card-profile__email m-link">{{ user?.email }}</a>
+					</div>
+				</div>
+				<div class="m-portlet__body-separator"></div>
+				<div class="m-widget1 m-widget1--paddingless">
+					<div class="m-widget1__item">
+						<div class="row m-row--no-padding align-items-center">
+							<div class="col">
+								<h3 class="m-widget1__title" translate>{{ 'PROFILE.AMOUNT.INGREDIENT' }}</h3>
+							</div>
+							<div class="col m--align-right">
+								<span class="m-widget1__number m--font-brand">{{ user?.amountOfIngredients }}</span>
+							</div>
+						</div>
+					</div>
+					<div class="m-widget1__item">
+						<div class="row m-row--no-padding align-items-center">
+							<div class="col">
+								<h3 class="m-widget1__title" translate>{{ 'PROFILE.AMOUNT.RECIPE' }}</h3>
+							</div>
+							<div class="col m--align-right">
+								<span class="m-widget1__number m--font-danger">{{ user?.amountOfRecipes }}</span>
+							</div>
+						</div>
+					</div>
+					<div class="m-widget1__item">
+						<div class="row m-row--no-padding align-items-center">
+							<div class="col">
+								<h3 class="m-widget1__title" translate>{{ 'PROFILE.AMOUNT.MENU' }}</h3>
+							</div>
+							<div class="col m--align-right">
+								<span class="m-widget1__number m--font-success"> {{ user?.amountOfMenus}}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-xl-9 col-lg-8">
+		<div class="m-portlet m-portlet--full-height m-portlet--tabs  ">
+
+			<div class="m-portlet__body">
+				<form class="m-form m-form--fit m-form--label-align-right" name="form" [formGroup]="formGroup" novalidate>
+					<div class="m-portlet__body">
+						<div class="form-group m-form__group">
+							<div class="col-10 ml-auto">
+								<h3 class="m-form__section" translate>{{ 'PROFILE.USER.DETAIL' }}</h3>
+							</div>
+						</div>
+						<div class="form-group m-form__group">
+							<label class="col-form-label" translate>{{ 'PROFILE.USER.NAME' }}</label>
+							<input class="form-control m-input cp-input" name="name" formControlName="name"
+									placeholder="{{'PROFILE.USER.NAME' | translate }}" type="text">
+						</div>
+						<div class="form-group m-form__group">
+							<label class="col-form-label" translate>{{ 'PROFILE.USER.EMAIL' }}</label>
+							<input class="form-control m-input cp-input" name="email" formControlName="email"
+									placeholder="{{'PROFILE.USER.EMAIL' | translate }}" type="text">
+						</div>
+
+						<div class="form-group m-form__group">
+							<label class="col-form-label" translate>{{ 'INPUTS.REGION' }}</label>
+							<select [compareWith]="compareSelect" class="form-control cp-input" name="region" formControlName="region">
+								<option value="null" [disabled]="true">Selecione uma opção</option>
+								<option *ngFor="let region of regions" [ngValue]="region">{{ region.state }}</option>
+							</select>
+						</div>
+
+						<div class="form-group m-form__group">
+							<mat-checkbox class="full-width" formControlName="filterByState"> {{ 'INPUTS.FILTERBYSTATE' | translate }} </mat-checkbox>
+						</div>
+
+					</div>
+					<!--TODO: Outros campos(Endereço, ocupação, etc) - Rever depois-->
+					<div class="m-portlet__foot m-portlet__foot--fit">
+						<div class="m-form__actions">
+							<div class="row">
+								<div class="col-2"></div>
+								<div class="col-7">
+									<button class="btn btn-accent m-btn m-btn--air m-btn--custom" [disabled]="!formGroup.valid || formGroup.pristine"
+									 (click)="saveModifications()" translate>{{
+										'PROFILE.BTN_SAVE_CHANGES' }}</button>&nbsp;&nbsp;
+
+									<button class="btn btn-secondary m-btn m-btn--air m-btn--custom" [disabled]="formGroup.pristine" (click)="cancelModifications()"
+									 translate>{{
+										'PROFILE.BTN_CANCEL'}}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
